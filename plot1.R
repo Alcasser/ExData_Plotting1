@@ -27,42 +27,15 @@ prepData <- function(data) {
   data
 }
 
-generatePlots <- function() {
+generatePlot <- function() {
   if(!file.exists(dataPath))
     fetchData(dataUrl)
-  
   data <- read.csv(dataPath, sep = ";", stringsAsFactors = F, na.strings = "?")
   data <- prepData(data)
-  
   plot1 <- function() {
     hist(data$Global_active_power, main = "Global Active Power", xlab = "Global Active Power (kilowatts)", col = "red")
   }
   generatePlotAsPng("plot1.png", plot1)
-  
-  plot2 <- function() {
-    dataWithDateAndtimeCol <- data %>% mutate(datetime = paste(Date, Time))
-    datetime <- strptime(dataWithDateAndtimeCol$datetime, "%Y-%m-%d %H:%M:%S") 
-    plot(datetime, data$Global_active_power, type = "l", ylab = "Global Active Power (kilowatts)", xlab = "")
-  }
-  generatePlotAsPng("plot2.png", plot2)
-  
-  plot3 <- function() {
-    plot(datetime, data$Sub_metering_1, type = "l", ylab = "Energy sub metering", xlab = "")
-    lines(datetime, data$Sub_metering_2, type = "l", col = "red")
-    lines(datetime, data$Sub_metering_3, type = "l", col = "blue")
-    legend("topright", pch = "-", col = c("black", "red", "blue"),
-           legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
-  }
-  generatePlotAsPng("plot3.png", plot3)
-  
-  generatePlotAsPng("plot4.png", function() {
-    plot2()
-    plot(datetime, data$Voltage, type = "l", ylab = "Voltage", xlab = "")
-    plot3()
-    plot(datetime, data$Global_reactive_power, type = "l", ylab = "Global Reactive Power", xlab = "")
-  }, mfrow = c(2, 2))
-  
-  
 }
 
-data <- generatePlots()
+generatePlot()
